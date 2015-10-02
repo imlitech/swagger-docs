@@ -124,7 +124,7 @@ module Swagger
         def get_debased_path(path, controller_base_path)
           path = @api_json_file_base_path + path
           path.gsub("#{controller_base_path}", "")
-        end"
+        end
 
         def process_path(path, root, config, settings)
           return {action: :skipped, reason: :empty_path} if path.empty?
