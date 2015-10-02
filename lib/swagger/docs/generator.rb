@@ -72,7 +72,7 @@ module Swagger
               resources << generate_resource(ret[:path], ret[:apis], ret[:models], settings, root, config)
               debased_path = get_debased_path(ret[:path], settings[:controller_base_path])
               resource_api = {
-                path: "#{Config.transform_path(trim_leading_slash(debased_path), api_version)}.{format}",
+                path: "#{Config.transform_path(trim_slashes(debased_path), api_version)}.{format}",
                 description: ret[:klass].swagger_config[:description]
               }
               root[:apis] << resource_api
@@ -118,12 +118,13 @@ module Swagger
         end
 
         def trim_slashes(str)
-          trim_leading_slash(trim_trailing_slash(str))
+          "/" + trim_leading_slash(trim_trailing_slash(str))
         end
 
         def get_debased_path(path, controller_base_path)
+          path = @api_json_file_base_path + path
           path.gsub("#{controller_base_path}", "")
-        end
+        end"
 
         def process_path(path, root, config, settings)
           return {action: :skipped, reason: :empty_path} if path.empty?
@@ -210,6 +211,7 @@ module Swagger
           controller_base_path = trim_leading_slash(config[:controller_base_path] || "")
           base_path += "/#{controller_base_path}" unless controller_base_path.empty?
           api_file_path = config[:api_file_path]
+          @api_json_file_base_path = api_file_path.split('/',2).last
           settings = {
             base_path: base_path,
             controller_base_path: controller_base_path,
